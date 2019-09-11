@@ -1,0 +1,11 @@
+{
+  "source":{
+    "url":"C:\\Users\\jeisonmarulanda\\Desktop\\C3\\Archivos\\",
+    "urimongo":"mongodb://localhost",
+    "database":"Agendamiento",
+    "extensionfile":".dat",
+    "day":"wed",
+    "hour":"11",
+    "minute":"20"
+  }
+}
