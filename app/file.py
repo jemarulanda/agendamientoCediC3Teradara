@@ -12,10 +12,12 @@ class File:
 
         sched = BlockingScheduler()
 
-        #Para conectarse con la base de datos
+        Mongo_URI = source['urimongo']#Direccion
+
+        #client = MongoClient(Mongo_URI)#Para conectarse con la base de datos
         client = MongoClient(
             f'mongodb+srv://{source["user"]}:{source["password"]}@{source["host"]}/admin?retryWrites=true')
-        
+
         db = client[source['database']]#Name database
 
         #Variable para la ruta al directorio
@@ -24,7 +26,7 @@ class File:
         
         #@sched.scheduled_job('interval', seconds=5)
         def timed_job():
-            print('This job is run every '+str(source['seconds'])+' seconds.')              
+            print('This job is run every five seconds.')              
             #Lista vacia para incluir los ficheros
             lstFiles = []
 
@@ -62,7 +64,7 @@ class File:
                                         for x in range(len(cabecera)):
                                             data[cabecera[x].rstrip('\n')] = data_split[x].rstrip('\n')
 
-                                    collection.insert_one({"Json": f'{data}'})
+                                    collection.insert_one({"Json": data })
                                     
                         except ConnectionFailure:
                             print('Cannot connect to Momgo DB')

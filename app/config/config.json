@@ -7,6 +7,6 @@
     "urimongo":"mongodb://localhost",
     "database":"Agendamiento",
     "extensionfile":".dat",
-    "seconds":30
+    "seconds":120
   }
 }
