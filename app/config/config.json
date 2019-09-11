@@ -1,5 +1,8 @@
 {
   "source":{
+    "host":"intdev-6j7zu.azure.mongodb.net",
+    "user":"dev",
+    "password":"0OjsBx0wyMGRrsLx",
     "url":"C:\\Users\\jeisonmarulanda\\Desktop\\C3\\Archivos\\",
     "urimongo":"mongodb://localhost",
     "database":"Agendamiento",

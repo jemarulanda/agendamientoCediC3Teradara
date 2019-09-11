@@ -12,10 +12,10 @@ class File:
 
         sched = BlockingScheduler()
 
-        Mongo_URI = source['urimongo']#Direccion
-
-        client = MongoClient(Mongo_URI)#Para conectarse con la base de datos
-
+        #Para conectarse con la base de datos
+        client = MongoClient(
+            f'mongodb+srv://{source["user"]}:{source["password"]}@{source["host"]}/admin?retryWrites=true')
+        
         db = client[source['database']]#Name database
 
         #Variable para la ruta al directorio
@@ -24,7 +24,7 @@ class File:
         
         #@sched.scheduled_job('interval', seconds=5)
         def timed_job():
-            print('This job is run every five seconds.')              
+            print('This job is run every '+str(source['seconds'])+' seconds.')              
             #Lista vacia para incluir los ficheros
             lstFiles = []
 
