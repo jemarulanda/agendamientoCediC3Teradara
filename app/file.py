@@ -81,7 +81,7 @@ class File:
                     
         try:
             #Asignamos el job que se ejecutará en un día a una hora especifica
-            sched.add_job(timed_job, 'cron', day_of_week=source['day'], hour=source['hour'], minute=source['minute'])
+            sched.add_job(timed_job, 'interval', seconds=source['seconds'])
             sched.start()
         except:
             print('Error, debes validar las propiedades del tiempo de ejecución')

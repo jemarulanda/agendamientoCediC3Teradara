@@ -4,8 +4,6 @@
     "urimongo":"mongodb://localhost",
     "database":"Agendamiento",
     "extensionfile":".dat",
-    "day":"wed",
-    "hour":"14",
-    "minute":"20"
+    "seconds":30
   }
 }
