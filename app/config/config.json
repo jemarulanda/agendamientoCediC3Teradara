@@ -1,11 +1,15 @@
 {
   "source":{
+    "accountnameazure" : "agendamientocedi",
+    "accountkeyazure" : "uLWVhH1Oe6OXz2qHOATgZdLieGYxtPjz219dMzFf1EUyW3dwLMziV86CM4juX1mB8sgebcfg27t7XEM+ALs6Tg==",
+    "blobnameazure" : "resourcesc3",
+    "blobnameazureprocesados" : "procesados",
     "host":"intdev-6j7zu.azure.mongodb.net",
     "user":"dev",
     "password":"0OjsBx0wyMGRrsLx",
     "url":"C:\\Users\\jeisonmarulanda\\Desktop\\C3\\Archivos\\",
     "database":"Agendamiento",
     "extensionfile":".dat",
-    "seconds":120
+    "seconds":5
   }
 }

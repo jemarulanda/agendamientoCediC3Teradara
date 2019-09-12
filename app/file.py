@@ -4,6 +4,7 @@ from pymongo.errors import ConnectionFailure
 import os
 import shutil
 from apscheduler.schedulers.blocking import BlockingScheduler
+from azure.storage.blob import BlockBlobService, PublicAccess
 
 class File:
 
@@ -11,43 +12,47 @@ class File:
     def main(cls, source):   
 
         sched = BlockingScheduler()
+        block_blob_service = BlockBlobService(account_name=source['accountnameazure'], account_key=source['accountkeyazure'])
+        local_path=os.path.expanduser("~\\")
 
-        #client = MongoClient(Mongo_URI)#Para conectarse con la base de datos
+        #client = MongoClient('mongodb://localhost')#Para conectarse con la base de datos
         client = MongoClient(
             f'mongodb+srv://{source["user"]}:{source["password"]}@{source["host"]}/admin?retryWrites=true')
 
         db = client[source['database']]#Name database
 
         #Variable para la ruta al directorio
-        path = source['url']
+        #path = source['url']
     
-        
-        @sched.scheduled_job('interval', seconds=5)
+        #Asignamos el job que se ejecutará en un día a una hora especifica o un intervalo de tiempo
+        @sched.scheduled_job('interval', seconds=source['seconds'])
         def timed_job():
             print('This job is run every five seconds.')              
             #Lista vacia para incluir los ficheros
             lstFiles = []
 
             #Lista con todos los ficheros del directorio:
-            lstDir = os.walk(path)   #os.walk()Lista directorios y ficheros
+            #lstDir = os.walk(path)   #os.walk()Lista directorios y ficheros
 
+            generator = block_blob_service.list_blobs(source['blobnameazure'])
+            
             try:
                 #Crea una lista de los ficheros dat que existen en el directorio y los incluye a la lista.
-                for root, dirs, files in lstDir:
-                    for fichero in files:
-                        (nombreFichero, extension) = os.path.splitext(fichero)
-                        if(extension == source['extensionfile']):
-                            lstFiles.append(nombreFichero+extension)
+                for blob in generator:
+                    if(blob.name[-4:] == source['extensionfile']):
+                        lstFiles.append(blob.name)
             except:
-                print('Falla verificando los archivos')                 
-            
+                print('Falla verificando los archivos')     
+
             try:
                 #Recorrer por pares y construir el json con el tamaño de la cabecera (primera linea)
                 for j in lstFiles:
+                    
                     nameFile=j
+                    block_blob_service.get_blob_to_path(source['blobnameazure'], nameFile, local_path+nameFile)
                     collection = db[nameFile[17:-4]]
 
-                    with open(path+nameFile, 'r') as file:
+                    with open(local_path+nameFile, 'r') as file:
                         
                         try:
                             for i, line in enumerate(file):
@@ -66,21 +71,23 @@ class File:
                                     
                         except ConnectionFailure:
                             print('Cannot connect to Momgo DB')
-                        except:
-                            print('Falla construyendo el json para la bd')
+                        except Exception as e:
+                            print('Falla construyendo el json para la bd '+str(e))
                         file.close()
                         print('Archivo procesado: '+nameFile)
                         try:
-                            os.rename(path+nameFile, path+nameFile+'.proccess')
-                            shutil.move(path+nameFile+'.proccess', path+"Procesado/"+nameFile+'.proccess')
-                        except:
-                            print('Failed move file or rename file')
-            except:
-                print('Falla construyendo el JSON para la bd')
+                            os.remove(local_path+nameFile)
+                            blob_url = block_blob_service.make_blob_url(source['blobnameazure'], nameFile)
+                            block_blob_service.copy_blob(source['blobnameazureprocesados'], nameFile, blob_url)
+                            block_blob_service.delete_blob(source['blobnameazure'], nameFile)
+                        except Exception as e:
+                            print('Falla moviendo y eliminando el archivo '+str(e))
+                        
+            except Exception as e:
+                print('Falla construyendo el JSON para la bd'+str(e))
             
                     
-        try:
-            #Asignamos el job que se ejecutará en un día a una hora especifica
+        try:            
             #sched.add_job(timed_job, 'interval', seconds=source['seconds'])
             sched.start()
         except:
