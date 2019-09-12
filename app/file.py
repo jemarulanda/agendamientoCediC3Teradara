@@ -12,8 +12,6 @@ class File:
 
         sched = BlockingScheduler()
 
-        Mongo_URI = source['urimongo']#Direccion
-
         #client = MongoClient(Mongo_URI)#Para conectarse con la base de datos
         client = MongoClient(
             f'mongodb+srv://{source["user"]}:{source["password"]}@{source["host"]}/admin?retryWrites=true')
@@ -24,7 +22,7 @@ class File:
         path = source['url']
     
         
-        #@sched.scheduled_job('interval', seconds=5)
+        @sched.scheduled_job('interval', seconds=5)
         def timed_job():
             print('This job is run every five seconds.')              
             #Lista vacia para incluir los ficheros
@@ -83,7 +81,7 @@ class File:
                     
         try:
             #Asignamos el job que se ejecutará en un día a una hora especifica
-            sched.add_job(timed_job, 'interval', seconds=source['seconds'])
+            #sched.add_job(timed_job, 'interval', seconds=source['seconds'])
             sched.start()
         except:
             print('Error, debes validar las propiedades del tiempo de ejecución')
