@@ -14,6 +14,6 @@ class App:
     def main(cls):
         '''start application'''
         File.main(cls.config['source'])
-                  
+
 if __name__ == '__main__':
     App().main()
